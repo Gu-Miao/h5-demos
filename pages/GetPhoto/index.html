@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Get Photo</title>
+  </head>
+  <body>
+    <video id="video" width="480" height="320"></video>
+    <div>
+      <button id="capture">Get Photo</button>
+    </div>
+    <canvas id="canvas" width="480" height="320"></canvas>
+    <script>
+      function getUserMedia(constraints, success, error) {
+        if (navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error)
+        }
+      }
+      let video = document.getElementById('video')
+      let canvas = document.getElementById('canvas')
+      let context = canvas.getContext('2d')
+
+      function success(stream) {
+        let CompatibleURL = window.URL || window.webkitURL
+        video.srcObject = stream
+        video.play()
+      }
+      function error(error) {
+        console.log(`error: ${error.name}, ${error.message}`)
+      }
+
+      if (
+        navigator.mediaDevices.getUserMedia ||
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia
+      ) {
+        getUserMedia({ video: { width: 480, height: 320 } }, success, error)
+      } else {
+        alert('your browser not support this')
+      }
+
+      document.getElementById('capture').addEventListener('click', function () {
+        context.drawImage(video, 0, 0, 480, 320)
+        const a = canvas.toDataURL('image/jpeg')
+        console.log(a)
+      })
+    </script>
+  </body>
+</html>
