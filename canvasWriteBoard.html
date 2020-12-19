@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Write Board - H5 Demos</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      #canvas {
+        margin: 0 auto;
+      }
+      #controller {
+        position: relative;
+        clear: both;
+      }
+      #clear_btn {
+        display: inline-block;
+        margin-right: 0;
+      }
+      .colorList {
+        clear: both;
+      }
+      .color_btn {
+        width: 30px;
+        height: 20px;
+        vertical-align: top;
+        border: none;
+      }
+      .color_btn:hover,
+      .width_btn:hover {
+        border: 2px solid violet;
+      }
+      .color_btn_selected {
+        border: 2px solid blueviolet;
+      }
+      #black_btn {
+        background: black;
+      }
+      #blue_btn {
+        background: blue;
+      }
+      #green_btn {
+        background: green;
+      }
+      #red_btn {
+        background: red;
+      }
+      #orange_btn {
+        background: orange;
+      }
+      #yellow_btn {
+        background: yellow;
+      }
+      .width_btn {
+        border-radius: 50%;
+        background: #000;
+        border: none;
+        text-align: center;
+        margin: 0 8px;
+      }
+      .width_btn_selected {
+        border: 2px solid green;
+      }
+      #lineWidth5 {
+        width: 5px;
+        height: 5px;
+      }
+      #lineWidth10 {
+        width: 10px;
+        height: 10px;
+      }
+      #lineWidth15 {
+        width: 15px;
+        height: 15px;
+      }
+      #lineWidth20 {
+        width: 20px;
+        height: 20px;
+      }
+      #lineWidth25 {
+        width: 25px;
+        height: 25px;
+      }
+      #lineWidth30 {
+        width: 30px;
+        height: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <canvas id="canvas"></canvas>
+      <div id="controller">
+        <div class="colorList">
+          <button id="black_btn" class="color_btn color_btn_selected" itemColor="black"></button>
+          <button id="blue_btn" class="color_btn" itemColor="blue"></button>
+          <button id="green_btn" class="color_btn" itemColor="green"></button>
+          <button id="red_btn" class="color_btn" itemColor="red"></button>
+          <button id="orange_btn" class="color_btn" itemColor="orange"></button>
+          <button id="yellow_btn" class="color_btn" itemColor="yellow"></button>
+        </div>
+        <div class="lineWidthList">
+          <button id="lineWidth5" class="width_btn" lineWidth="5"></button>
+          <button id="lineWidth10" class="width_btn" lineWidth="10"></button>
+          <button id="lineWidth15" class="width_btn" lineWidth="15"></button>
+          <button id="lineWidth20" class="width_btn" lineWidth="20"></button>
+          <button id="lineWidth25" class="width_btn" lineWidth="25"></button>
+          <button id="lineWidth30" class="width_btn width_btn_selected" lineWidth="30"></button>
+        </div>
+        <button id="clear_btn" class="op_btn">Reset</button>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.js"
+    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    var canvas = document.getElementById('canvas')
+    var canvasWidth = Math.min(500, $(window).width() - 200)
+    var cxt = canvas.getContext('2d')
+    canvas.width = canvasWidth
+    canvas.height = canvas.width
+    $('#controller').css('width', canvasWidth + 'px')
+    var isMouseDown = false
+    var lastLoc = { x: 0, y: 0 } //起笔坐标
+    var lastTime = 0 //用于计算时间
+    var lastLineWidth = -1
+    var lineColor = 'black'
+    drawGrid(cxt)
+    function beginStroke(point) {
+      isMouseDown = true
+      lastLoc = windowToCanvas(point.x, point.y)
+      lastTime = new Date().getTime()
+    }
+    function endStroke() {
+      isMouseDown = false
+    }
+    function moveStroke(point) {
+      var curLoc = windowToCanvas(point.x, point.y)
+      var curTime = new Date().getTime()
+      var s = calcDistance(curLoc, lastLoc) //获取笔锋经过的距离
+      var t = curTime - lastTime //获取笔锋经过的时间 ，用于计算行笔速度，赋值不同的宽度
+      var lineWidth = calcLineWidth(t, s)
+
+      cxt.beginPath()
+      cxt.moveTo(lastLoc.x, lastLoc.y)
+      cxt.lineTo(curLoc.x, curLoc.y)
+      cxt.strokeStyle = lineColor
+      cxt.lineWidth = lineWidth
+      cxt.lineCap = 'round'
+      cxt.lineJoin = 'round'
+      cxt.stroke()
+      cxt.closePath()
+
+      lastLoc = curLoc
+      lastTime = curTime
+      lastLineWidth = lineWidth
+    }
+    canvas.onmousedown = function (e) {
+      e.preventDefault()
+      beginStroke({ x: e.clientX, y: e.clientY })
+    }
+    canvas.onmouseup = function (e) {
+      endStroke()
+      e.preventDefault()
+    }
+    canvas.onmouseout = function (e) {
+      endStroke()
+      e.preventDefault()
+    }
+    canvas.onmousemove = function (e) {
+      e.preventDefault()
+      if (isMouseDown) {
+        moveStroke({ x: e.clientX, y: e.clientY })
+      }
+    }
+    // 触屏事件
+    canvas.addEventListener('touchstart', function (e) {
+      e.preventDefault()
+      var touch = e.touches[0]
+      beginStroke({ x: touch.pageX, y: touch.pageY })
+    })
+    canvas.addEventListener('touchmove', function (e) {
+      e.preventDefault()
+      if (isMouseDown) {
+        var touch = e.touches[0]
+        moveStroke({ x: touch.pageX, y: touch.pageY })
+      }
+    })
+    canvas.addEventListener('touchend', function (e) {
+      e.preventDefault()
+      endStroke()
+    })
+    // }
+    var maxLineWidth = 20
+    var minLineWidth = 1
+    var maxStrokeV = 10
+    var minStrokeV = 0.1
+    function calcLineWidth(t, s) {
+      // 计算运笔速度和时间，获取不同得到宽度
+      var resultLineWidth = 0
+      var v = s / t
+      if (v <= minStrokeV) {
+        resultLineWidth = maxLineWidth
+      } else if (v >= maxStrokeV) {
+        resultLineWidth = minLineWidth
+      } else {
+        resultLineWidth =
+          maxLineWidth -
+          ((v - minStrokeV) / (maxStrokeV - minStrokeV)) * (maxLineWidth - minLineWidth)
+      }
+      if ((lastLineWidth = -1)) {
+        return resultLineWidth
+      }
+      return (lastLineWidth * 2) / 3 + (resultLineWidth * 1) / 3
+    }
+    function calcDistance(loc1, loc2) {
+      return Math.sqrt(
+        (loc1.x - loc2.x) * (loc1.x - loc2.x) + (loc1.y - loc2.y) * (loc1.y - loc2.y)
+      )
+    }
+    function windowToCanvas(x, y) {
+      var box = canvas.getBoundingClientRect()
+      return { x: x - box.left, y: y - box.top }
+    }
+    function drawGrid(cxt) {
+      cxt.save()
+      cxt.beginPath()
+      cxt.moveTo(3, 3)
+      cxt.lineTo(canvas.width - 3, 3)
+      cxt.lineTo(canvas.width - 3, canvas.height - 3)
+      cxt.lineTo(3, canvas.height - 3)
+      cxt.lineTo(3, 3)
+      cxt.lineWidth = 6
+      cxt.strokeStyle = 'red'
+      cxt.closePath()
+      cxt.stroke()
+      cxt.restore()
+      cxt.save()
+      cxt.beginPath()
+      cxt.moveTo(3, 3)
+      cxt.lineTo(canvas.width, canvas.height)
+      cxt.moveTo(canvas.width, 3)
+      cxt.lineTo(3, canvas.height)
+      cxt.moveTo(canvas.width / 2, 3)
+      cxt.lineTo(canvas.width / 2, canvas.height)
+      cxt.moveTo(3, canvas.height / 2)
+      cxt.lineTo(canvas.width, canvas.height / 2)
+      cxt.strokeStyle = 'red'
+      cxt.lineWidth = 1
+      cxt.stroke()
+      cxt.closePath()
+      cxt.restore()
+    }
+    // 控制代码
+    $('#clear_btn').click(function (e) {
+      cxt.clearRect(0, 0, canvas.width, canvas.height)
+      drawGrid(cxt)
+    })
+    $('.color_btn').click(function () {
+      if (!$(this).hasClass('color_btn_selected')) {
+        $(this).addClass('color_btn_selected').siblings().removeClass('color_btn_selected')
+      }
+      lineColor = $(this).attr('itemColor')
+    })
+    $('.width_btn').click(function () {
+      if (!$(this).hasClass('width_btn_selected')) {
+        $(this).addClass('width_btn_selected').siblings().removeClass('width_btn_selected')
+      }
+      maxLineWidth = $(this).attr('lineWidth')
+    })
+  </script>
+</html>
