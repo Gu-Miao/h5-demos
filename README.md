@@ -6,3 +6,4 @@ Some H5 demos.
 - Get Photo
 - History
 - Canvas Write Borad
+- Text Split Animation

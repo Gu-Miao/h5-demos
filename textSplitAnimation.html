@@ -1,0 +1,101 @@
+<!-- Get more from https://www.bilibili.com/video/BV1TA411T7ne -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html {
+        font-size: 20px;
+      }
+      body {
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      button {
+        margin-bottom: 10px;
+      }
+      h1 {
+        font-size: 3.6rem;
+      }
+      span {
+        display: inline-block;
+      }
+      h1.animate span {
+        animation-name: var(--animation);
+        animation-delay: var(--dely);
+        animation-timing-function: ease-in-out;
+        animation-duration: 0.4s;
+      }
+
+      @keyframes jump {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(10px);
+        }
+      }
+
+      @keyframes pop {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      @keyframes flip {
+        0%,
+        100% {
+          transform: rotateY(0);
+        }
+        50% {
+          transform: rotateY(90deg);
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          color: inherit;
+        }
+        50% {
+          color: #08c;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>TextSplitAnimation</h1>
+    <button data-animation="jump">JUMP</button>
+    <button data-animation="pop">POP</button>
+    <button data-animation="flip">FLIP</button>
+    <button data-animation="blink">BLINK</button>
+  </body>
+  <script>
+    const h1 = document.querySelector('h1')
+    h1.innerHTML = h1.textContent.replace(/\S/g, '<span>$&</span>')
+    h1.querySelectorAll('span').forEach((span, index) => {
+      span.style.setProperty('--dely', `${index * 0.1}s`)
+    })
+
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', e => {
+        h1.style.setProperty('--animation', e.target.getAttribute('data-animation'))
+        h1.classList.remove('animate')
+        void h1.offsetWidth
+        h1.classList.add('animate')
+      })
+    })
+  </script>
+</html>
