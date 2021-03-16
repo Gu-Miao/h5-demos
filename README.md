@@ -6,4 +6,5 @@ Some H5 demos.
 - Get Photo
 - History
 - Canvas Write Borad
+- App Store Expandable Card
 - Text Split Animation
