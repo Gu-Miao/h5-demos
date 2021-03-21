@@ -8,3 +8,4 @@ Some H5 demos.
 - Canvas Write Borad
 - App Store Expandable Card
 - Text Split Animation
+- Mac Dock Bar

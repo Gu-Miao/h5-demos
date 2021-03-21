@@ -1,0 +1,104 @@
+<!-- Get more from https://www.bilibili.com/video/BV1Sf4y1s7Cg -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MacOS Dock Bar</title>
+    <style>
+      :root {
+        font-size: 15px;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 100%;
+        min-height: 100vh;
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+        background-image: linear-gradient(
+          109.6deg,
+          rgba(25, 170, 209, 1) 11.3%,
+          rgba(21, 65, 249, 1) 69.9%
+        );
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        width: 100%;
+        height: 8rem;
+        display: flex;
+        justify-content: center;
+      }
+      .dock {
+        list-style: none;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .dock li {
+        --scale: 1;
+        font-size: calc(6rem * var(--scale));
+        cursor: default;
+        transition: 15ms ease-in-out;
+        margin: 0 1rem;
+        position: relative;
+        top: calc((6rem * var(--scale) - 6rem) / 2 * -1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glass">
+      <ul class="dock">
+        <li>😃</li>
+        <li>😊</li>
+        <li>😜</li>
+        <li>😍</li>
+        <li>🤩</li>
+        <li>🥳</li>
+        <li>🥶</li>
+      </ul>
+    </div>
+  </body>
+  <script>
+    document.querySelectorAll('ul li').forEach(li => {
+      li.addEventListener('mousemove', e => {
+        const item = e.target
+        const itemRect = item.getBoundingClientRect()
+        const offset = Math.abs(e.clientX - itemRect.left) / itemRect.width
+
+        const prev = item.previousElementSibling || null
+        const next = item.nextElementSibling || null
+
+        const scale = 0.6
+
+        resetScale()
+
+        if (prev) {
+          prev.style.setProperty('--scale', 1 + scale * Math.abs(offset - 1))
+        }
+
+        item.style.setProperty('--scale', 1 + scale)
+
+        if (next) {
+          next.style.setProperty('--scale', 1 + scale * offset)
+        }
+      })
+    })
+
+    document.querySelector('.dock').addEventListener('mouseleave', () => resetScale())
+
+    function resetScale() {
+      document.querySelectorAll('.dock li').forEach(li => {
+        li.style.setProperty('--scale', 1)
+      })
+    }
+  </script>
+</html>
