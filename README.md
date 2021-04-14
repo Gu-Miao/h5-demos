@@ -9,3 +9,4 @@ Some H5 demos.
 - App Store Expandable Card
 - Text Split Animation
 - Mac Dock Bar
+- Candle Animation
