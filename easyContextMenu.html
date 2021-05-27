@@ -9,8 +9,15 @@
       * {
         margin: 0;
       }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
       .menu {
         position: fixed;
+        background: #fff;
         border: 1px solid #aaa;
         box-shadow: 5px 5px 5px #aaa;
         padding: 5px;
@@ -36,6 +43,7 @@
     </style>
   </head>
   <body>
+    <h1>Right click your mouse</h1>
     <ul class="menu" style="display: none">
       <li class="menu-item">Select All</li>
       <li class="menu-item">Copy</li>
