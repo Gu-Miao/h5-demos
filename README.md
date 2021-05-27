@@ -10,3 +10,4 @@ Some H5 demos.
 - Text Split Animation
 - Mac Dock Bar
 - Candle Animation
+- Easy Context Menu

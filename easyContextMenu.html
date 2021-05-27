@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Easy Context Menu - H5 Demos</title>
+    <style>
+      * {
+        margin: 0;
+      }
+      .menu {
+        position: fixed;
+        border: 1px solid #aaa;
+        box-shadow: 5px 5px 5px #aaa;
+        padding: 5px;
+        list-style: none;
+        font-size: 14px;
+        color: #333;
+        user-select: none;
+        z-index: 999;
+      }
+      .menu-item {
+        padding: 5px;
+        border-bottom: 1px solid #aaa;
+        cursor: pointer;
+      }
+      .menu-item:last-child {
+        border-bottom: none;
+      }
+      .menu-item:hover {
+        background: #32abf1;
+        color: #fff;
+        border-bottom-color: #32abf1;
+      }
+    </style>
+  </head>
+  <body>
+    <ul class="menu" style="display: none">
+      <li class="menu-item">Select All</li>
+      <li class="menu-item">Copy</li>
+      <li class="menu-item">Paste</li>
+      <li class="menu-item">Save as...</li>
+      <li class="menu-item">Open Devtools</li>
+    </ul>
+  </body>
+  <script>
+    const menu = document.querySelector('.menu')
+    const html = document.documentElement
+    const padding = 5
+
+    html.addEventListener('contextmenu', e => {
+      // prevent defualt event
+      e.preventDefault()
+
+      const { clientX, clientY } = e
+      const { clientWidth, clientHeight } = html
+
+      // If display of menu is none, we can't get width and
+      // heigth directly so that we should show it and force
+      // browser to reflow.
+      if (menu.style.display === 'none') {
+        menu.style.display = ''
+        void html.offsetWidth
+      }
+
+      const { width, height } = menu.getBoundingClientRect()
+
+      // Set left or right
+      if (width + clientX + padding >= clientWidth) {
+        menu.style.left = ''
+        menu.style.right = padding + 'px'
+      } else {
+        menu.style.right && (menu.style.right = '')
+        menu.style.left = clientX + 10 + 'px'
+      }
+
+      // Set top or bottom
+      if (height + clientY + padding >= clientHeight) {
+        menu.style.top = ''
+        menu.style.bottom = padding + 'px'
+      } else {
+        menu.style.bottom && (menu.style.bottom = '')
+        menu.style.top = clientY + 'px'
+      }
+    })
+
+    // Close menu when you click around.
+    html.addEventListener('click', () => {
+      menu.style.display = 'none'
+    })
+
+    // Stop propagation or the menu will close when you click
+    // items in it.
+    menu.addEventListener('click', e => e.stopPropagation())
+  </script>
+</html>
