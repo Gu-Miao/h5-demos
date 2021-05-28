@@ -11,3 +11,4 @@ Some H5 demos.
 - Mac Dock Bar
 - Candle Animation
 - Easy Context Menu
+- Masonry Layout

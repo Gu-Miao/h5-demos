@@ -1,0 +1,199 @@
+<!-- Masonry.js and Isotop.js can be more easy maybe. -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masonry Layout</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        margin: 4px;
+        font-family: Helvetica;
+      }
+      ul {
+        list-style: none;
+      }
+      .mesonry {
+        column-count: 4;
+        column-gap: 0;
+      }
+      .mesonry-1 {
+        width: 100%;
+      }
+      .w-25 {
+        width: 25%;
+      }
+      .item {
+        padding: 5px;
+        box-sizing: border-box;
+        position: relative;
+        counter-increment: item-counter;
+      }
+      .item img {
+        display: block;
+        width: 100%;
+      }
+      .item::after {
+        display: block;
+        content: counter(item-counter);
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 24px;
+        height: 24px;
+        background: #000;
+        color: #fff;
+        text-align: center;
+        line-height: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Grid layout</h1>
+    <ul class="mesonry">
+      <li class="item">
+        <img src="https://picsum.photos/360/500" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/200/500" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/400" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/420" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/335/300" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/600" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/720" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/445/300" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/460?random=8" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/460?random=4" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/300/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/200/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/600/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/700/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/360" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/500/460" />
+      </li>
+      <li class="item">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+    </ul>
+
+    <h1>With Masonry.js</h1>
+    <ul class="mesonry-1">
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/500" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/200/500" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/400" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/420" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/335/300" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/600" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/720" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/445/300" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/460?random=8" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/460?random=4" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/300/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/200/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/600/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/700/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/360" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/500/460" />
+      </li>
+      <li class="item w-25">
+        <img src="https://picsum.photos/360/460" />
+      </li>
+    </ul>
+  </body>
+  <script src="./public/js/masonry.pkgd.min.js"></script>
+  <script src="./public/js/imagesloaded.pkgd.min.js"></script>
+  <script>
+    const ul = document.querySelector('.mesonry-1')
+
+    imagesLoaded(ul, function () {
+      new Masonry(ul, {
+        itemSelector: '.item',
+        columnWidth: '.w-25',
+        percentPosition: true,
+        gutter: 0
+      })
+    })
+  </script>
+</html>
