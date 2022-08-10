@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Some H5 demos" />
+    <meta name="keywords" content="HTML5 demo" />
+    <title>New Mimicry Segments - H5 Demos</title>
+    <link rel="shortcut icon" href="./public/images/logo.png" type="image/png" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f1f1f1;
+        perspective: 500px;
+      }
+      .container {
+        --container-width: 380px;
+        --container-padding-x: 16px;
+        --container-padding-y: 12px;
+        --container-rotate-origin: center;
+        --container-rotate-y: 0;
+        --groove-width: calc((var(--container-width) - 3 * var(--container-padding-x)) / 2);
+        --groove-left: var(--container-padding-x);
+        position: relative;
+        width: var(--container-width);
+        height: 80px;
+        padding: var(--container-padding-y) var(--container-padding-x);
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: #e2e6eb;
+        box-shadow: -10px -10px 15px #f5f9fd, 10px 10px 15px #d8dbe5;
+        transition: transform 0.4s cubic-bezier(0, 0, 0.48, 1);
+      }
+      .container.rotating {
+        transform-origin: var(--container-rotate-origin);
+        transform: rotateY(var(--container-rotate-y));
+      }
+      .container::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: var(--container-padding-y);
+        z-index: 1;
+        transform: translateX(var(--groove-left));
+        width: var(--groove-width);
+        height: calc(100% - var(--container-padding-y) * 2);
+        border-radius: 12px;
+        box-shadow: inset 8px 8px 6px #d9dce6, inset -5px -5px 15px #f5f9fd,
+          inset -5px -5px 15px #f5f9fd, inset 7px 7px 6px #d9dce6;
+        transition: transform 1s cubic-bezier(0.82, 0.12, 0.18, 0.88);
+      }
+      .container::after {
+        display: block;
+        content: '';
+        clear: both;
+      }
+      .btn {
+        width: var(--groove-width);
+        height: 100%;
+        float: left;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        font-size: 18px;
+        font-weight: bold;
+        color: #999;
+        background-color: inherit;
+        cursor: pointer;
+        transition: color 0.8s ease-in-out;
+      }
+      .btn:hover,
+      .btn:focus-visible {
+        color: #666;
+      }
+      .btn:not(:last-child) {
+        margin-right: var(--container-padding-x);
+      }
+      .btn.active {
+        color: #333;
+        animation: jete 0.5s 0.6s linear;
+        transform-origin: center;
+        transform: scale(1.05);
+        outline: none;
+        cursor: default;
+      }
+      @keyframes jete {
+        0% {
+          transform: scale(1);
+        }
+        80% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1.05);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <button class="btn active">Light</button>
+      <button class="btn">Dark</button>
+    </div>
+  </body>
+  <script>
+    const container = document.querySelector('.container')
+    let btns = document.querySelectorAll('.btn')
+    btns.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        const active = document.querySelector('.btn.active')
+        active.classList.remove('active')
+        active.disabled = false
+
+        btn.classList.add('active')
+        btn.disabled = true
+        container.style.setProperty(
+          '--groove-left',
+          `calc(${i + 1} * var(--container-padding-x) + ${i} * var(--groove-width))`
+        )
+        if (!container.classList.contains('rotating')) container.classList.add('rotating')
+        container.style.setProperty('--container-rotate-y', `${i ? 10 : -10}deg`)
+        container.style.setProperty('--container-rotate-origin', `${i ? '80% top' : '20% top'}deg`)
+      })
+    })
+    container.addEventListener('transitionend', () => {
+      container.classList.remove('rotating')
+    })
+  </script>
+</html>
