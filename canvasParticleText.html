@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Particle Text - H5 Demos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        display: block;
+        background-color: black;
+        width: 100%;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script src="./public/js/lodash.min.js"></script>
+  <script>
+    /** @type {HTMLCanvasElement} */
+    const canvas = document.querySelector('#canvas')
+    const ctx = canvas.getContext('2d')
+
+    let particles = []
+    let amount = 0
+    const mouse = { x: -9999, y: -9999 }
+    const colors = [
+      'rgba(0, 222, 255, 0.85)',
+      'rgba(12, 253, 74, 0.75)',
+      'rgba(193, 253, 12, 0.85)',
+      'rgba(192, 213, 255, 0.85)',
+      'rgba(244, 223, 254, 0.75)',
+    ]
+    let ww = window.innerWidth
+    let wh = window.innerHeight
+
+    function Particle(x, y) {
+      this.x = Math.random() * ww
+      this.y = Math.random() * wh
+      this.dest = { x, y }
+      this.r = Math.max(Math.random() * 5, 2)
+      this.vx = (Math.random() - 0.5) * (this.dest.x - this.x) * 5
+      this.vy = (Math.random() - 0.5) * (this.dest.y - this.y) * 5
+      this.accX = 0
+      this.accY = 0
+      this.friction = Math.random() * 0.05 + 0.92
+      this.color = colors[Math.floor(Math.random() * 4)]
+    }
+    Particle.prototype.render = function () {
+      this.accX = (this.dest.x - this.x) / 800
+      this.accY = (this.dest.y - this.y) / 800
+      this.vx += this.accX
+      this.vy += this.accY
+      this.vx *= Math.random() * 0.05 + 0.92
+      this.vy *= Math.random() * 0.05 + 0.92
+      this.x += this.vx
+      this.y += this.vy
+
+      ctx.fillStyle = this.color
+      ctx.beginPath()
+      ctx.arc(this.x, this.y, this.r, Math.PI * 2, 0, false)
+      ctx.fill()
+
+      const x = this.x - mouse.x
+      const y = this.y - mouse.y
+
+      const distance = Math.sqrt(x * x + y * y)
+      if (distance < 75) {
+        this.accX = x / 50
+        this.accY = y / 50
+        this.vx += this.accX
+        this.vy += this.accY
+      }
+    }
+
+    function initScene() {
+      ww = canvas.width = window.innerWidth
+      wh = canvas.height = window.innerHeight
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      ctx.font = 'bold 18vw "Abril Fatface"'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText('Some Text', ww / 2, wh / 2, ww - 60)
+
+      const { data } = ctx.getImageData(0, 0, ww, wh)
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      particles = []
+      for (let i = 0; i < ww; i += Math.round(ww / 150)) {
+        for (let j = 0; j < wh; j += Math.round(wh / 150)) {
+          if (data[(i + j * ww) * 4 + 3] > 200) {
+            particles.push(new Particle(i, j))
+          }
+        }
+      }
+      amount = particles.length
+    }
+
+    function render() {
+      requestAnimationFrame(render)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      for (let i = 0; i < amount; i++) {
+        particles[i].render()
+      }
+    }
+
+    window.addEventListener('resize', _.debounce(initScene, 300))
+    window.addEventListener('mousemove', e => {
+      mouse.x = e.clientX
+      mouse.y = e.clientY
+    })
+    window.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        mouse.x = e.touches[0].clientX
+        mouse.y = e.touches[0].clientY
+      }
+    })
+    window.addEventListener('touchend', () => {
+      mouse.x = -9999
+      mouse.y = -9999
+    })
+
+    initScene()
+    requestAnimationFrame(render)
+  </script>
+</html>
