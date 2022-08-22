@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clip Path Animation Button - H5 Demos</title>
+    <link rel="shortcut icon" href="./public/images/logo.png" type="image/png" />
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .btn {
+        border: none;
+        outline: none;
+        padding: 0;
+        background: inherit;
+        font: inherit;
+        color: #08c;
+        box-shadow: inset 0 0 0 1px rgba(21, 209, 242, 0.56);
+        position: relative;
+        cursor: pointer;
+        transition: 0.25s ease-in-out;
+      }
+      .btn:hover,
+      .btn:active {
+        color: #fe3211;
+        box-shadow: inset 0 0 0 1px rgba(230, 15, 9, 0.56);
+      }
+
+      .text {
+        color: white;
+        font-size: 22px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 20px;
+        font-weight: bolder;
+        background: rgba(0, 126, 255, 0.32);
+        border: none;
+      }
+      .btn:hover .text,
+      .btn:active .text {
+        transition: 0.25s ease-in-out;
+        background: rgba(230, 15, 9, 0.56);
+      }
+      .btn:after,
+      .btn:before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+      .btn:after,
+      .btn:before {
+        content: '';
+        margin: -8px;
+        --m: 2px;
+        --n: calc(100% - 2px);
+        box-shadow: inset 0 0 0 var(--m);
+        animation: clip 4s ease-in-out infinite;
+      }
+      @keyframes clip {
+        0%,
+        to {
+          clip-path: polygon(var(--m) 0, 100% 0, 100% var(--m), var(--m) var(--m));
+        }
+        1% {
+          clip-path: polygon(0 0, var(--n) 0, var(--n) var(--m), 0 var(--m));
+        }
+        25% {
+          clip-path: polygon(0 0, var(--m) 0, var(--m) var(--n), 0 var(--n));
+        }
+        26% {
+          clip-path: polygon(0 var(--m), var(--m) var(--m), var(--m) 100%, 0 100%);
+        }
+        50% {
+          clip-path: polygon(0 var(--n), var(--n) var(--n), var(--n) 100%, 0 100%);
+        }
+        51% {
+          clip-path: polygon(var(--m) var(--n), 100% var(--n), 100% 100%, var(--m) 100%);
+        }
+        75% {
+          clip-path: polygon(var(--n) var(--m), 100% var(--m), 100% 100%, var(--n) 100%);
+        }
+        76% {
+          clip-path: polygon(var(--n) 0, 100% 0, 100% var(--n), var(--n) var(--n));
+        }
+      }
+      .btn:before {
+        animation-delay: -2s;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn">
+      <span class="text">This is a buton</span>
+    </button>
+  </body>
+</html>
