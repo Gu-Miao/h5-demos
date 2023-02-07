@@ -1,0 +1,77 @@
+<!-- https://juejin.cn/post/7196747356796518460 -->
+<!-- https://css-tricks.com/a-fancy-hover-effect-for-your-avatar/#top-of-site -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Hover</title>
+    <link rel="shortcut icon" href="./public/images/logo.png" type="image/png" />
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #e0e4cc;
+        user-select: none;
+      }
+
+      img {
+        --s: 400px;
+        --b: 10px;
+        --c: #c02942;
+        --f: 1;
+
+        --_g: 50% / calc(100% / var(--f)) 100% no-repeat content-box;
+        --_o: calc((1 / var(--f) - 1) * var(--s) / 2 - var(--b));
+
+        width: var(--s);
+        aspect-ratio: 1;
+        padding-top: calc(var(--s) / 5);
+        cursor: pointer;
+        border-radius: 0 0 999px 999px;
+        outline: var(--b) solid var(--c);
+
+        /*
+          偏移 = b + 间距 = b + (f - 1) * s / 2
+          间距是放大 f 倍后的，所以真正的间距应除以 f
+          即间距 = (1 / f - 1) * s / 2
+          间距为负数，再整理后可得 (1 - 1 / f) * s / 2 - b
+        */
+        outline-offset: var(--_o);
+
+        /*
+          circle 意为渐变图形为圆形，默认是椭圆，因此后面的 background-size 只需指定宽度即可
+          closest-side 表示渐变结束与最近的边相切
+          颜色后跟的两个数字意为颜色开始和颜色结束，这个区域内颜色为实色
+        */
+        background: radial-gradient(
+            circle closest-side,
+            #ecd078 calc(99% - var(--b)),
+            var(--c) calc(100% - var(--b)) 99%,
+            #0000
+          )
+          var(--_g);
+        -webkit-mask: linear-gradient(#000 0 0) no-repeat 50% calc(-1 * var(--_o)) /
+            calc(100% / var(--f) - 2 * var(--b)) 50%,
+          radial-gradient(circle closest-side, #000 99%, #0000) var(--_g);
+        mask: linear-gradient(#000 0 0) no-repeat 50% calc(-1 * var(--_o)) /
+            calc(100% / var(--f) - 2 * var(--b)) 50%,
+          radial-gradient(circle closest-side, #000 99%, #0000) var(--_g);
+        transform: scale(var(--f));
+        transition: 0.5s;
+      }
+
+      img:hover {
+        --f: 1.35;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 这种方法存在一定的限制，图片左右边需要是透明的，否则在 background 边框和 outline 交汇处会有压盖的情况-->
+    <img src="/public/images/nenmaster.png" alt="nenmaster" draggable="false" />
+  </body>
+</html>

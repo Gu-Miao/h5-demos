@@ -4,17 +4,18 @@ Some H5 demos.
 
 [简体中文](./README_zh.md)
 
-1. Cyberpunk 2077 Button
-2. Get Photo
-3. History
-4. Canvas Write Borad
-5. App Store Expandable Card
-6. Text Split Animation
-7. Mac Dock Bar
-8. Candle Animation
-9. Easy Context Menu
-10. Masonry Layout
-11. Canvas Particle Text
-12. Clip Path Animation Button
-13. Neumorphism Segments
-14. Turning Card
+1. Cyberpunk 2077 button
+2. Get photo
+3. History API
+4. Canvas write borad
+5. AppStore expandable cards
+6. Text split animation
+7. MacBook dockbar
+8. Candle animation
+9. Easy context menu
+10. Masonry layout
+11. Canvas particle text
+12. Clip path animation button
+13. Neumorphism segments
+14. Turning card
+15. Avatar Scale Effect by only one `<img>` tag
