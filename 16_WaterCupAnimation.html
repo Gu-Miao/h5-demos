@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Cup Animation</title>
+    <link rel="shortcut icon" href="/public/images/logo.png" type="image/png" />
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        height: 100lvh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000;
+      }
+      .container {
+        position: relative;
+        width: 500px;
+        height: 600px;
+      }
+      .chart {
+        width: 100%;
+        height: 100%;
+      }
+      .bowl {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        /*
+          弧长占 60%，将其旋转为两端水平
+          则需要旋转 (1 - 0.6) / 2 * 360 度
+        */
+        transform: rotate(72deg);
+        transform-origin: center;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+      .water {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 500px;
+        height: 500px;
+      }
+      .base-bottom,
+      .base-middle,
+      .base-top,
+      .base-topmost {
+        position: absolute;
+        top: 280px;
+        left: 0;
+        background-color: transparent;
+        width: 500px;
+        height: 500px;
+        transform-origin: center;
+        transform: rotateX(72deg);
+      }
+      .base-middle {
+        transform: translateY(-10px) rotateX(72deg);
+      }
+      .base-top {
+        transform: translateY(-15px) rotateX(72deg);
+      }
+      .base-topmost {
+        transform: translateY(-18px) rotateX(72deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="bowl">
+        <div class="chart" id="bowlChart"></div>
+      </div>
+      <div class="water">
+        <div class="chart" id="waterChart"></div>
+      </div>
+      <div class="base-bottom">
+        <div class="chart" id="baseBottomChart"></div>
+      </div>
+      <div class="base-middle">
+        <div class="chart" id="baseMiddleChart"></div>
+      </div>
+      <div class="base-top">
+        <div class="chart" id="baseTopChart"></div>
+      </div>
+      <div class="base-topmost">
+        <div class="chart" id="baseTopmostChart"></div>
+      </div>
+    </div>
+  </body>
+  <script src="/public/js/echarts.min.js"></script>
+  <script src="/public/js/echarts-liquidfill.min.js"></script>
+  <script>
+    // 获取碗壁元素
+    let bowlChart = echarts.init(document.getElementById('bowlChart'))
+    // 设置碗壁echarts配置项
+    bowlChart.setOption({
+      series: [
+        {
+          type: 'pie',
+          radius: ['90%', '98%'],
+          label: { show: false },
+          emphasis: { scale: false, label: { show: false } },
+          labelLine: { show: false },
+          data: [
+            {
+              value: 6,
+              itemStyle: {
+                color: '#041A22',
+                borderRadius: 10,
+                borderWidth: 2,
+                borderColor: '#00a757',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                shadowBlur: 8,
+                shadowColor: '#01FE85'
+              }
+            },
+            { value: 4, itemStyle: { color: '#0000' } }
+          ]
+        }
+      ]
+    })
+
+    // 获取水波元素
+    let waterChart = echarts.init(document.getElementById('waterChart'))
+    // 设置水波echart配置项
+    waterChart.setOption({
+      series: [
+        {
+          type: 'liquidFill', // 系列类型选liquidFill，当然这个需要先安装库，否则会报错
+          radius: '90%', // 水球图外圈百分比
+          center: ['50%', '50%'], // 中心点
+          color: [
+            // 水波的颜色，包括偏移量，色阶和渐变方式
+            {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: '#00a757', opacity: 0.2 },
+                { offset: 1, color: '#012a60', opacity: 0.2 }
+              ]
+            }
+          ],
+          data: [0.33, 0.28, 0.3], // 波浪数量和高度，数据数量匹配波浪数量，数值取0~1
+          backgroundStyle: { color: 'transparent' }, // 背景色透明
+          label: false, // 关闭说明文字
+          outline: false // 关闭水球图外框
+        }
+      ]
+    })
+    // 获取元素
+    let baseBottomChart = echarts.init(document.getElementById('baseBottomChart'))
+    // 设置配置项
+    baseBottomChart.setOption({
+      series: [
+        // 最外圈格子
+        {
+          type: 'gauge', // 系列为仪表盘
+          radius: '85%', // 外圈起始位置
+          clockwise: false, // 是否顺时针
+          startAngle: '0', // 起始角度
+          endAngle: '240', // 结束角度
+          splitNumber: 35, // 分割数量
+          axisTick: false,
+          axisLabel: false, // 走第二个逻辑把这个线变透明
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, 'transparent'],
+                [1, 'transparent']
+              ],
+              width: 10
+            }
+          }, // 分割线设置宽度和高度
+          splitLine: {
+            show: true,
+            length: 15, // 这个是每一格的高度
+            lineStyle: {
+              color: '#11976d',
+              width: 10 // 每一格的宽度
+            }
+          }
+        }, // 最外圈线
+        {
+          type: 'gauge',
+          radius: '84%',
+          clockwise: false,
+          startAngle: '245',
+          endAngle: '355',
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, '#11976d'],
+                [1, '#11976d']
+              ],
+              width: 10
+            }
+          }
+        }, // 次外圈虚点
+        {
+          type: 'gauge',
+          radius: '72%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '354',
+          splitNumber: 60,
+          axisTick: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, 'transparent'],
+                [1, 'transparent']
+              ]
+            }
+          },
+          splitLine: {
+            show: true,
+            length: 3,
+            lineStyle: {
+              color: '#12917e',
+              width: 3
+            }
+          }
+        }, // 中间细线
+        {
+          type: 'gauge',
+          radius: '60%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '359.99',
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, '#124d3d'],
+                [1, '#124d3d']
+              ],
+              width: 3
+            }
+          }
+        }, // 中间齿轮格子
+        {
+          type: 'gauge',
+          radius: '54%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '358',
+          splitNumber: 35,
+          axisTick: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, 'transparent'],
+                [1, 'transparent']
+              ],
+              width: 10
+            }
+          },
+          splitLine: {
+            show: true,
+            length: 12,
+            lineStyle: {
+              color: '#124d3d',
+              width: 10
+            }
+          }
+        }, // 中间齿轮线
+        {
+          type: 'gauge',
+          radius: '49%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '359.99',
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, '#124d3d'],
+                [1, '#124d3d']
+              ],
+              width: 13
+            }
+          }
+        }
+      ]
+    })
+    // 中间层
+    let baseMiddleChart = echarts.init(document.getElementById('baseMiddleChart'))
+    baseMiddleChart.setOption({
+      series: [
+        // 锅底
+        {
+          type: 'gauge',
+          radius: '43%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '359.99', // 为什么不是360，因为360 = 0
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, '#11976d'],
+                [1, '#11976d']
+              ],
+              width: 12
+            }
+          }
+        }, // 锅耳
+        {
+          type: 'gauge',
+          radius: '50%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '359.99',
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, 'transparent'],
+                [0.2, 'transparent'],
+                [0.21, '#11976d'],
+                [0.29, '#11976d'],
+                [0.3, 'transparent'],
+                [0.7, 'transparent'],
+                [0.71, '#11976d'],
+                [0.79, '#11976d'],
+                [0.8, 'transparent'],
+                [1, 'transparent']
+              ],
+              width: 16
+            }
+          }
+        }
+      ]
+    })
+
+    // 顶层
+    let baseTopChart = echarts.init(document.getElementById('baseTopChart'))
+    baseTopChart.setOption({
+      series: [
+        // 次内圈线
+        {
+          type: 'gauge',
+          radius: '32%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '359.99',
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, '#76978e'],
+                [1, '#76978e']
+              ],
+              width: 2
+            }
+          }
+        }
+      ]
+    })
+
+    // 最顶层
+    let baseTopmostChart = echarts.init(document.getElementById('baseTopmostChart'))
+    baseTopmostChart.setOption({
+      series: [
+        // 最内圈格子
+        {
+          type: 'gauge',
+          radius: '28%',
+          clockwise: false,
+          startAngle: '0',
+          endAngle: '359.99',
+          splitNumber: 35,
+          axisTick: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, 'transparent'],
+                [1, 'transparent']
+              ],
+              width: 10
+            }
+          },
+          splitLine: {
+            show: true,
+            length: 3,
+            lineStyle: {
+              color: '#76978e',
+              width: 3
+            }
+          }
+        }, // 最内圈线
+        {
+          type: 'gauge',
+          radius: '28%',
+          clockwise: false,
+          startAngle: '82',
+          endAngle: '195',
+          splitNumber: 0,
+          detail: '',
+          axisTick: false,
+          splitLine: false,
+          axisLabel: false,
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: [
+                [0, '#76978e'],
+                [1, '#76978e']
+              ],
+              width: 3
+            }
+          }
+        }
+      ]
+    })
+
+    // 逆时针旋转的度数
+    let leftRotSize = 0
+    function rotate() {
+      baseBottomChart.setOption({
+        series: [
+          { startAngle: `${0 + leftRotSize}`, endAngle: `${240 + leftRotSize}` },
+          { startAngle: `${0 - leftRotSize * 2}`, endAngle: `${354 - leftRotSize * 2}` }
+        ]
+      })
+      baseMiddleChart.setOption({
+        series: [
+          { startAngle: `${0 + leftRotSize}`, endAngle: `${240 + leftRotSize}` },
+          { startAngle: `${0 - leftRotSize * 2}`, endAngle: `${354 - leftRotSize * 2}` }
+        ]
+      })
+      baseTopChart.setOption({
+        series: [
+          { startAngle: `${0 + leftRotSize}`, endAngle: `${240 + leftRotSize}` },
+          { startAngle: `${0 - leftRotSize * 2}`, endAngle: `${354 - leftRotSize * 2}` }
+        ]
+      })
+      baseTopmostChart.setOption({
+        series: [
+          { startAngle: `${0 + leftRotSize}`, endAngle: `${240 + leftRotSize}` },
+          { startAngle: `${0 - leftRotSize * 2}`, endAngle: `${354 - leftRotSize * 2}` }
+        ]
+      })
+
+      leftRotSize += 0.1
+
+      requestAnimationFrame(rotate)
+    }
+
+    requestAnimationFrame(rotate)
+  </script>
+</html>

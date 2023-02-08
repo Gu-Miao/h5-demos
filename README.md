@@ -19,3 +19,4 @@ Some H5 demos.
 13. Neumorphism segments
 14. Turning card
 15. Avatar Scale Effect by only one `<img>` tag
+16. Water cup animation based on `echarts`
