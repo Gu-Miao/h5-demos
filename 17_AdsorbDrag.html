@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adsorb Drag</title>
+    <style>
+      body {
+        height: 5000px;
+      }
+      .box {
+        cursor: grab;
+        outline: 6px solid red;
+        outline-offset: -6px;
+        border-radius: 8px;
+        background-color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        --x: 0;
+        --y: 0;
+        transform: translate(var(--x), var(--y));
+      }
+      .box.transiting {
+        transition: transform 0.4s ease-out;
+      }
+      .line {
+        position: fixed;
+        outline: 2px solid green;
+        outline-offset: -2px;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 26px;
+        font-weight: bold;
+        color: #999;
+        padding: 100px;
+        line-height: 1.57;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <div class="line">
+      When you drag the box outside the green line, the box will automatically adsorb to the
+      boundary
+    </div>
+  </body>
+  <script>
+    /** @type {HTMLDivElement} */
+    const box = document.querySelector('.box')
+    const size = 200
+    box.style.width = size + 'px'
+    box.style.height = size + 'px'
+
+    /** @type {HTMLDivElement} */
+    const line = document.querySelector('.line')
+    const boundary = 150
+    line.style.inset = boundary + 'px'
+
+    let isHolding = false
+    const holding = { x: 0, y: 0 }
+
+    box.addEventListener('mousedown', e => {
+      isHolding = true
+
+      holding.x = e.offsetX
+      holding.y = e.offsetY
+
+      box.classList.remove('transiting')
+    })
+    window.addEventListener('mousemove', e => {
+      if (!isHolding) return
+
+      const { clientWidth, clientHeight } = document.documentElement
+      const translateX = clamp(e.clientX - holding.x, 0, clientWidth - size)
+      const translateY = clamp(e.clientY - holding.y, 0, clientHeight - size)
+
+      box.style.setProperty('--x', translateX + 'px')
+      box.style.setProperty('--y', translateY + 'px')
+    })
+    window.addEventListener('mouseup', e => {
+      isHolding = false
+
+      const x = +box.style.getPropertyValue('--x').split('px')[0]
+      const y = +box.style.getPropertyValue('--y').split('px')[0]
+      const { clientWidth, clientHeight } = document.documentElement
+
+      if (x <= boundary) {
+        box.classList.add('transiting')
+        box.style.setProperty('--x', 0)
+      } else if (x + size + boundary >= clientWidth) {
+        box.classList.add('transiting')
+        box.style.setProperty('--x', `${clientWidth - size}px`)
+      }
+      if (y <= boundary) {
+        box.classList.add('transiting')
+        box.style.setProperty('--y', 0)
+      } else if (y + size + boundary >= clientHeight) {
+        box.classList.add('transiting')
+        box.style.setProperty('--y', `${clientHeight - size}px`)
+      }
+    })
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value))
+    }
+  </script>
+</html>
